@@ -72,6 +72,11 @@ one Claude API call + one Slack webhook.
 - If a Triage row's Suggested Category stays blank after a scan, check Stackdriver/Apps Script
   execution logs — it usually means the Claude API call failed or the API key isn't set; it will
   retry automatically on the next 15-minute run.
+- If you're tempted to narrow the Gmail OAuth scope down to `gmail.readonly` + `gmail.labels` for
+  least-privilege reasons: don't — `thread.addLabel()` (marking an email processed so it's never
+  re-scanned) throws a permissions error under that combination. Apps Script's built-in `GmailApp`
+  needs the broader `gmail.modify` scope for that specific call, even though Gmail's own API docs
+  suggest `gmail.labels` alone should cover label operations. Confirmed by testing, not by docs.
 
 ## Known issue to revisit
 
