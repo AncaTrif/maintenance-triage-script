@@ -1,0 +1,28 @@
+MAINTENANCE TRIAGE GUIDE
+
+CATEGORIES
+- Plumbing (leaks, clogs, no water, water heater, toilet)
+- Electrical (outlets, breakers, lighting, sparking, exposed wiring)
+- HVAC (heat, AC, ventilation)
+- Appliance (fridge, stove, dishwasher, washer/dryer)
+- Locks & Security (broken locks, lockouts, doors/windows not securing)
+- Pest (rodents, insects, infestation)
+- Structural (ceiling, walls, flooring, roof, windows)
+- Common Area (hallways, parking, shared laundry, elevators)
+- Other / Unclear
+
+PRIORITY DEFINITIONS
+- Emergency: immediate safety/habitability risk. Active flooding or major leak, no heat in cold weather, no water, gas smell, sparking/exposed wires, sewage backup, broken exterior door/lock compromising security, no working smoke/CO detector.
+- High: significant disruption, not immediately dangerous. No AC in hot weather, major appliance failure, one working toilet down in single-bathroom unit, persistent leak that's contained.
+- Medium: livable but needs timely attention. Dripping faucet, running toilet, minor appliance issue, one of several lights out.
+- Low: cosmetic or non-urgent. Loose cabinet handle, paint touch-up, squeaky hinge.
+
+VENDOR MATCHING
+Match the category to a vendor on the Vendors sheet whose specialty matches. If no clear specialty match exists, suggest "Needs Manual Assignment" rather than guessing.
+
+CONFIDENCE GUIDANCE
+- High: tenant text clearly describes a specific, unambiguous issue mapping cleanly to one category and priority.
+- Medium: category is reasonably clear but severity, scope, or vendor fit is ambiguous.
+- Low: text is vague, contradictory, missing key details, or doesn't clearly fit any category.
+
+When in doubt between two priority levels, choose the higher (more urgent) one and note the ambiguity in the confidence reason.
