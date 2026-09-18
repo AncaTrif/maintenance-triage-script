@@ -149,6 +149,7 @@ function scanGmailForNewTickets() {
       ]);
     });
     thread.addLabel(processedLabel);
+    thread.markRead();
   });
 }
 
