@@ -72,3 +72,17 @@ one Claude API call + one Slack webhook.
 - If a Triage row's Suggested Category stays blank after a scan, check Stackdriver/Apps Script
   execution logs — it usually means the Claude API call failed or the API key isn't set; it will
   retry automatically on the next 15-minute run.
+
+## Known issue to revisit
+
+- Approving a Triage row writes `Status = "Sent to Vendor"` into Tracker, but nothing was actually
+  sent — no vendor email goes out automatically (by design, per the original spec). That label
+  describes intent ("approved, ready for dispatch"), not a completed action, and reads as
+  misleading at a glance. Left as-is for now since the exact string was part of the original spec
+  and Tracker may already have a data-validation dropdown built around it — changing the literal
+  text should be a deliberate decision, not a silent edit. If it's ever changed, it's this one line
+  in `Code.gs`, inside `onEdit()`:
+  ```javascript
+  'Status': 'Sent to Vendor'
+  ```
+  and any matching dropdown validation on Tracker's own Status column would need updating too.
