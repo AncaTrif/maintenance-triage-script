@@ -213,8 +213,17 @@ function processTriageRows() {
       return;
     }
 
-    const result = classifyWithClaude(apiKey, tenantText, guideText, vendorsText);
-    if (!result) return; // leave blank, retried on next 15-minute run
+    let result;
+    try {
+      result = classifyWithClaude(apiKey, tenantText, guideText, vendorsText);
+    } catch (e) {
+      console.error('Row ' + sheetRow + ' triage failed: ' + e);
+      // Leaves Suggested Category blank so it's retried next run, but surfaces the
+      // error right in the sheet since Stackdriver logs aren't something everyone checks.
+      sheet.getRange(sheetRow, TRIAGE_HEADERS.indexOf('Confidence Reason') + 1)
+        .setValue('Triage error, will retry next run: ' + e.message);
+      return;
+    }
 
     writeSuggestion(sheet, sheetRow, result);
 
@@ -292,21 +301,17 @@ function classifyWithClaude(apiKey, tenantText, guideText, vendorsText) {
   });
 
   if (response.getResponseCode() !== 200) {
-    console.error('Claude API error ' + response.getResponseCode() + ': ' + response.getContentText());
-    return null;
+    throw new Error('Claude API returned ' + response.getResponseCode() + ': ' + response.getContentText());
   }
 
-  try {
-    const body = JSON.parse(response.getContentText());
-    const parsed = JSON.parse(body.content[0].text);
-    return {
-      category: parsed.category, priority: parsed.priority, vendor: parsed.vendor,
-      confidence: parsed.confidence, reason: parsed.reason
-    };
-  } catch (e) {
-    console.error('Could not parse Claude response: ' + e);
-    return null;
-  }
+  const body = JSON.parse(response.getContentText());
+  const textBlock = body.content.filter(function (block) { return block.type === 'text'; })[0];
+  if (!textBlock) throw new Error('Claude response had no text content block.');
+  const parsed = JSON.parse(textBlock.text);
+  return {
+    category: parsed.category, priority: parsed.priority, vendor: parsed.vendor,
+    confidence: parsed.confidence, reason: parsed.reason
+  };
 }
 
 // ===== STEP 3: SLACK ALERTS =====
@@ -326,12 +331,16 @@ function postSlackAlert(unit, category, priority, reason) {
     '*Priority:* ' + priority + '\n' +
     '*Confidence reason:* ' + reason;
 
-  UrlFetchApp.fetch(webhook, {
+  const response = UrlFetchApp.fetch(webhook, {
     method: 'post',
     contentType: 'application/json',
     payload: JSON.stringify({ text: text }),
     muteHttpExceptions: true
   });
+
+  if (response.getResponseCode() !== 200) {
+    console.error('Slack webhook returned ' + response.getResponseCode() + ': ' + response.getContentText());
+  }
 }
 
 // ===== STEP 4: APPROVAL -> TRACKER =====
